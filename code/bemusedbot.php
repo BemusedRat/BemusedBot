@@ -8,7 +8,7 @@
 			'nick' => 'bemusedbot',
 			'name' => '',
 			'pass' => 'oauth:14sr9y6wczvsun2yoy9f2pr0oo46hh',
-			'channel' => '#bemusedrat'
+			'channel' => '#pilipili96'
 		);
 
 		//This is going to hold our TCP/IP connection
@@ -99,17 +99,26 @@
 					case ':!victor' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " : piliBuildProbe HITMAN piliBuildProbe");
 					break;
-					case ':!banme' :
+					case ':!sudoku' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " :/timeout " . $Name . " 1");
+						$this->send_data('PRIVMSG', $this->ex[2] . " : " . $Name . " commits honourable sudoku KZskull");
+					break;
+					case ':!varsovie' :
+						$this->send_data('PRIVMSG', $this->ex[2] . " :/timeout Varsovie_Pat 1");
+					break;
+					case ':!zed' :
+						$this->send_data('PRIVMSG', $this->ex[2] . " : Fuk u 420 DansGame");
 					break;
 					case ':!russianroulette' :
 						if(!isset($lastshot)) {
 							$lastshot = 0;
 						}
-						if((time() - $lastshot) < 120) {
-							$this->send_data('PRIVMSG', $this->ex[2] . " :/me is reloading...");
+						if(($timesince = time() - $lastshot) < 120) {
+							$timeleft = 120 - $timesince;
+							$this->send_data('PRIVMSG', $this->ex[2] . " :/me is still spinning the thing. Wait " . $timeleft . " seconds!");
 						} else {
 							$chamber = rand(1,6);
+							$lastshot = time();
 							if($chamber == 6) {
 								$this->send_data('PRIVMSG', $this->ex[2] . " :/timeout " . $Name . " 30");
 								$this->send_data('PRIVMSG', $this->ex[2] . " : " . $Name . " shot himself in the head");
@@ -119,7 +128,6 @@
 								$this->send_data('PRIVMSG', $this->ex[2] . " : Survival Hype \ 4Head /");
 							}
 						}
-						$lastshot = time();
 					break;
 					case ':!quit' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " : Bye!");
