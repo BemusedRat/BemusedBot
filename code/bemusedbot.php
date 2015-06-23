@@ -51,6 +51,10 @@
 			while(1) {
 				// Get chata data and split into lines and words
 				$data = fgets($this->socket, 128);
+				// Remove SOH characters that get in the way
+				$data = preg_replace('/\x01/', '', $data);
+				// Remove quotes (I think..?)
+				$data = str_replace(array(chr(10), chr(13)), '', $data);
 				echo nl2br($data);
 				flush();
 				$this->ex = explode(' ', $data);
@@ -61,8 +65,10 @@
 				}
 
 				// Check for commands
-				$command = str_replace(array(chr(10), chr(13)), '', $this->ex[3]);
+				$command = $this->ex[3];
+				//Get the user's name
 				$Name = $this->getName($this->ex);
+
 
 				// Command List
 				switch($command) {
@@ -93,9 +99,6 @@
 					case ':!emotes' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " : piliBuildProbe piliProtossed piliTCGM piliKnees");
 					break;
-					case ':!print' :
-						$this->send_data('PRIVMSG', $this->ex[2] . " : 0 " . $this->ex[0] . " 1 " . $this->ex[1] . " 2 " . $this->ex[2] . " 3 " . $this->ex[3]);
-					break;
 					case ':!victor' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " : piliBuildProbe HITMAN piliBuildProbe");
 					break;
@@ -106,10 +109,9 @@
 					case ':!varsovie' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " :/timeout Varsovie_Pat 1");
 					break;
-					case ':!zed' :
-						$this->send_data('PRIVMSG', $this->ex[2] . " : Fuk u 420 DansGame");
-					break;
+
 					case ':!russianroulette' :
+					case ':!rr' :
 						if(!isset($lastshot)) {
 							$lastshot = 0;
 						}
@@ -127,6 +129,23 @@
 								$this->send_data('PRIVMSG', $this->ex[2] . " : The gun clicks & " . $Name . " lives");
 								$this->send_data('PRIVMSG', $this->ex[2] . " : Survival Hype \ 4Head /");
 							}
+						}
+					break;
+					case ':!slap' :
+						if(isset($this->ex[4])) {
+							$slapee = str_replace(array(chr(10), chr(13)), '', $this->ex[4]);
+						} else {
+							$slapee = $Name;
+						}
+						$this->send_data('PRIVMSG', $this->ex[2] . " :/me Slaps " . $slapee . " with a shoe KAPOW");
+					break;
+					case ':ACTION' :
+						echo('3' . $this->ex[3] . "3 \r\n");
+						echo('4' . $this->ex[4] . "4 \r\n");
+						echo('5' . $this->ex[5] . "5 \r\n");
+						if($this->ex[4] == 'kicks' && strcasecmp($this->ex[5], 'BemusedBot') == 0) {
+							$this->send_data('PRIVMSG', $this->ex[2] . " : KAPOW OUCH!!");
+							$this->send_data('PRIVMSG', $this->ex[2] . " : Fight me IRL, " . $Name . " DansGame");
 						}
 					break;
 					case ':!quit' :
