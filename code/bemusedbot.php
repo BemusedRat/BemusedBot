@@ -11,11 +11,14 @@
 			'channel' => '#pilipili96'
 		);
 
-		//This is going to hold our TCP/IP connection
+		// This is going to hold our TCP/IP connection
 		var $socket;
 
-		//This is going to hold all of the messages both server and client
+		// This is going to hold all of the messages both server and client
 		var $ex = array();
+
+		// This is going to hold all of the mods
+		var $mods = array();
 
 	}
 
@@ -48,14 +51,17 @@
 		}
 
 		public function Main() {
+			// Get mods on startup
+			$this->getMods();
 			while(1) {
 				// Get chata data and split into lines and words
-				$data = fgets($this->socket, 128);
+				$data = fgets($this->socket, 256);
+				// Paste data to screen
+				echo nl2br($data);
 				// Remove SOH characters that get in the way
 				$data = preg_replace('/\x01/', '', $data);
 				// Remove quotes (I think..?)
 				$data = str_replace(array(chr(10), chr(13)), '', $data);
-				echo nl2br($data);
 				flush();
 				$this->ex = explode(' ', $data);
 
@@ -68,6 +74,11 @@
 				$command = $this->ex[3];
 				//Get the user's name
 				$Name = $this->getName($this->ex);
+
+				// Save mods to array after getMods() is called
+				if($Name == 'jtv') {
+					$this->saveMods();
+				}
 
 
 				// Command List
@@ -109,6 +120,9 @@
 					case ':!varsovie' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " :/timeout Varsovie_Pat 1");
 					break;
+					case ':!mods' :
+						$this->getMods();
+					break;
 
 					case ':!russianroulette' :
 					case ':!rr' :
@@ -137,12 +151,9 @@
 						} else {
 							$slapee = $Name;
 						}
-						$this->send_data('PRIVMSG', $this->ex[2] . " :/me Slaps " . $slapee . " with a shoe KAPOW");
+						$this->send_data('PRIVMSG', $this->ex[2] . " :/me slaps " . $slapee . " with a shoe KAPOW");
 					break;
 					case ':ACTION' :
-						echo('3' . $this->ex[3] . "3 \r\n");
-						echo('4' . $this->ex[4] . "4 \r\n");
-						echo('5' . $this->ex[5] . "5 \r\n");
 						if($this->ex[4] == 'kicks' && strcasecmp($this->ex[5], 'BemusedBot') == 0) {
 							$this->send_data('PRIVMSG', $this->ex[2] . " : KAPOW OUCH!!");
 							$this->send_data('PRIVMSG', $this->ex[2] . " : Fight me IRL, " . $Name . " DansGame");
@@ -162,7 +173,7 @@
 
 		public function getName($ex) {
 			$data = explode('!', $ex[0]);
-			$Name = str_replace(':', ' ', $data[0]);
+			$Name = str_replace(':', '', $data[0]);
 			return $Name;
 		}
 
@@ -174,6 +185,24 @@
 				fwrite($this->socket, $cmd . ' ' . $msg . "\r\n");
 				echo('<script>console.log(' . $cmd . ' ' . $msg . ');</script>');
 			}
+		}
+
+		public function getMods() {
+			$this->send_data('PRIVMSG', $this->ex[2] . " :/mods");
+		}
+
+		public function saveMods() {
+			// Remove the first few data points to get to the message
+			$data = array_slice($this->ex, 3);
+			// Put all the words together
+			$data = implode($data);
+			// Remove the first letter which is a colon
+			$data = substr($data, 1);
+			// Remove everything up to and including the next colon
+			// The rest will be the mods
+			$data = preg_replace('/^[^:]*:/', '', $data);
+			// Put the mods into an array
+			$this->mods = explode(',', $data);
 		}
 
 	}
