@@ -115,7 +115,7 @@
 					break;
 					case ':!sudoku' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " :/timeout " . $Name . " 1");
-						$this->send_data('PRIVMSG', $this->ex[2] . " : " . $Name . " commits honourable sudoku KZskull");
+						$this->send_data('PRIVMSG', $this->ex[2] . " : " . $Name . " commits honourable sudoku SMSkull");
 					break;
 					case ':!varsovie' :
 						$this->send_data('PRIVMSG', $this->ex[2] . " :/timeout Varsovie_Pat 1");
@@ -145,13 +145,35 @@
 							}
 						}
 					break;
+					case ':!flipcoin' :
+					case ':!coinflip' :
+						$this->send_data('PRIVMSG', $this->ex[2] . " :/me flips a coin ShibeZ");
+						$coin = rand(1,2);
+						if($coin == 1){
+							$coin = 'HEADS RalpherZ';
+						} else {
+							$coin = 'TAILS BionicBunion';
+						}
+						$this->send_data('PRIVMSG', $this->ex[2] . " : It's " . $coin);
+					break;
 					case ':!slap' :
+					case ':!slaps' :
 						if(isset($this->ex[4])) {
 							$slapee = str_replace(array(chr(10), chr(13)), '', $this->ex[4]);
 						} else {
 							$slapee = $Name;
 						}
 						$this->send_data('PRIVMSG', $this->ex[2] . " :/me slaps " . $slapee . " with a shoe KAPOW");
+					break;
+					case ':!hug' :
+					case ':!hugs' :
+						if(isset($this->ex[4])) {
+							$hugee = str_replace(array(chr(10), chr(13)), '', $this->ex[4]);
+						} else {
+							$hugee = $Name;
+						}
+						$this->send_data('PRIVMSG', $this->ex[2] . " :/me hugs " . $hugee . " gently");
+						$this->send_data('PRIVMSG', $this->ex[2] . " : It's OK, " . $hugee . ". I love y-SYSTEM--ERROR-- MrDestructoid");
 					break;
 					case ':ACTION' :
 						if($this->ex[4] == 'kicks' && strcasecmp($this->ex[5], 'BemusedBot') == 0) {
