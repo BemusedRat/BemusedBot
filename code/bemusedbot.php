@@ -187,6 +187,18 @@
 						die('quit');
 				}
 
+				// Twitch Notify reactions
+				switch($Name) {
+					case 'twitchnotify' :
+						if($this->ex[4] == 'just' && $this->ex[5] == 'subscribed!') {
+							$this->send_data('PRIVMSG', $this->ex[2] . " : Sub Hype! \ 4Head /");
+							$this->send_data('PRIVMSG', $this->ex[2] . " : Welcome " . substr($command, 1) . " :D");
+						} elseif($this->ex[4] == 'subscribed' && $this->ex[5] == 'for') {
+							$this->send_data('PRIVMSG', $this->ex[2] . " : " . $this->ex[5] . " month sub Hype! \ 4Head /");
+							$this->send_data('PRIVMSG', $this->ex[2] . " : Thanks for resubbing, " . substr($command, 1) . " :D");
+						}
+					break;
+				}
 
 
 			}
